@@ -19,15 +19,21 @@ namespace Bolt
         {
             Console.WriteLine(Settings.Version);
             Settings.LoadSettings();
-
+            
             ConcurrentQueue<string> queue = new ConcurrentQueue<string>();
-            DiskRipper diskRipper = new DiskRipper();
-            Thread ripperThread = new Thread(new ThreadStart(() => diskRipper.Run(queue)));
-            ripperThread.Start();
-
-            Converter converter = new Converter();
-            Thread converterThread = new Thread(new ThreadStart(() => converter.Run(queue)));
-            converterThread.Start();
+            if (Settings.MakeMKV_Enabled)
+            {
+                DiskRipper diskRipper = new DiskRipper();
+                Thread ripperThread = new Thread(new ThreadStart(() => diskRipper.Run(queue)));
+                ripperThread.Start();
+            }
+                
+            if(Settings.HandBrake_Enabled)
+            {
+                Converter converter = new Converter();
+                Thread converterThread = new Thread(new ThreadStart(() => converter.Run(queue)));
+                converterThread.Start();
+            }            
 
             //Need to have a basic shell
             while(true)
